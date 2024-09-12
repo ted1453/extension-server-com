@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+</head>
+<body>
+    <h2>Received Messages</h2>
+    <ul>
+        {% for message in messages %}
+            <li>{{ message.content }} - {{ message.created_at }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

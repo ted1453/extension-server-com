@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Django WebSocket Messenger",
+  "version": "1.0",
+  "description": "Send messages to Django and receive real-time responses via WebSocket.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "externally_connectable": {
+    "matches": ["http://127.0.0.1:8000/*"]
+  }
+}
