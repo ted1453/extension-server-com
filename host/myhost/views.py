@@ -16,12 +16,12 @@ def process_message(request):
             anchor_tags = data.get('anchors','')
             selected = selection(anchor_tags)
             # Save the message to the database
-            message = Message(content=message_content,anchor=selected)
+            message = Message(content=message_content, anchor = selected)
             message.save()
 
             # Respond back to the Chrome extension
-            response_message = f"Server received: {message_content} Selected : {selected}"
-            return JsonResponse({'response': response_message,'url': selected})
+            response_message = f"Server received: {message_content} Url : {selected}"
+            return JsonResponse({'response': response_message, 'url': selected})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'error': 'Invalid method'}, status=405)
