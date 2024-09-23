@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() { 
     document.getElementById('sendMessageButton').addEventListener('click', async () => {
         const message = document.getElementById('messageInput').value;
-
         let anchors = {};
-
         // Wrapping chrome.tabs.query and chrome.tabs.sendMessage in a Promise
         const getAnchorsFromActiveTab = () => {
             return new Promise((resolve, reject) => {
@@ -26,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Get anchors from the active tab
             anchors = await getAnchorsFromActiveTab();
-            // console.log("popup:",anchors)
+            console.log("popup:",anchors)
         } catch (error) {
             console.error("Error fetching anchors: ", error);
         }
@@ -45,12 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 document.getElementById('serverResponse').textContent = data.response;
                 if (data.url) {
-                    const a = document.createElement('a');
-                    a.href = data.url; 
-                    a.target = '_blank';//generates a new tab for click
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    chrome.tabs.create({ url: data.url }, function (tab) {
+                        chrome.runtime.sendMessage({
+                            action: 'newTabOpened',
+                            tabId: tab.id,
+                            tabUrl: data.url
+                        }, function (response) {
+                            console.log('Message sent to background:', response.status);
+                        });
+                    });
                 }
             } catch (error) {
                 console.error('Error sending data to server: ', error);
