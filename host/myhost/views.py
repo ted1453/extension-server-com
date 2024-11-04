@@ -5,7 +5,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Message
-from .selection import selection
 
 @csrf_exempt
 def process_message(request):
@@ -13,15 +12,14 @@ def process_message(request):
         try:
             data = json.loads(request.body)
             message_content = data.get('message', '')
-            anchor_tags = data.get('anchors','')
-            selected = selection(anchor_tags)
+            urls = data.get('urls','')
             # Save the message to the database
-            message = Message(content=message_content, anchor = selected)
+            message = Message(content=message_content, urls = urls)
             message.save()
 
             # Respond back to the Chrome extension
-            response_message = f"Server received: {message_content} Url : {selected}"
-            return JsonResponse({'response': response_message, 'url': selected})
+            response_message = f"Server received: {message_content} Url : {urls}"
+            return JsonResponse({'response': response_message, 'url': urls})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'error': 'Invalid method'}, status=405)

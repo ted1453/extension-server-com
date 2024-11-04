@@ -2,16 +2,15 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "getAnchors") {
         // Get all anchor tags on the page
-        const anchors = document.querySelectorAll('a'); // Get all anchor elements
-        const hrefs = []; // Initialize an empty array for hrefs
-        // Loop through each anchor and push the href to the array
-        anchors.forEach(anchor => {
-            hrefs.push(anchor.href);
-        });
-        // Convert the array of hrefs to a JSON string
-        const hrefsJson = JSON.stringify(hrefs);
-        // const hrefsJson =  JSON.stringify(document.querySelector('a')?.href || '');
-        console.log("content:", hrefsJson);
-        sendResponse({anchors: hrefsJson});
+        let anchors = Array.from(document.querySelectorAll('a')).map(anchor => anchor.href);
+        
+        // Send the list of anchor URLs back to the background script
+        chrome.runtime.sendMessage({ action: 'processAnchors', anchors: anchors });
+        
+        // Send the anchors as a response to the sender
+        sendResponse({ anchors: anchors });
+    } else {
+        // Handle any other actions if needed
+        sendResponse({ error: "Unknown action" });
     }
 });
